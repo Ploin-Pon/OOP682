@@ -1,7 +1,3 @@
-from models.person import Person
-from models.student import Student
-from models.staff import Staff
-
 class Person:
   def __init__(self, pid, name, age):
     self.pid = pid
