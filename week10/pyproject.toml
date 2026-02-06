@@ -1,12 +1,7 @@
 [project]
-name = "oop"
+name = "week10"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = []
-
-[tool.uv.workspace]
-members = [
-    "fastapi-lab",
-]
