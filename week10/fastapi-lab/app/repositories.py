@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 from .models import Task, TaskCreate
 
-
 class ITaskRepository(ABC):
+    
     @abstractmethod
     def get_all(self) -> List[Task]:
         pass
@@ -11,11 +11,18 @@ class ITaskRepository(ABC):
     @abstractmethod
     def create(self, task: TaskCreate) -> Task:
         pass
-
+        
     @abstractmethod
     def get_by_id(self, task_id: int) -> Optional[Task]:
         pass
-
+    
+    @abstractmethod
+    def get_by_title(self, title: str) -> Optional[Task]:
+        pass
+    
+    @abstractmethod
+    def update_task_complete(self, task_id: int) -> Optional[Task]:
+        pass
 
 class InMemoryTaskRepository(ITaskRepository):
     def __init__(self):
@@ -26,7 +33,10 @@ class InMemoryTaskRepository(ITaskRepository):
         return self.tasks
 
     def create(self, task_in: TaskCreate) -> Task:
-        task = Task(id=self.current_id, **task_in.dict())
+        task = Task(
+            id=self.current_id,
+            **task_in.dict()
+        )
         self.tasks.append(task)
         self.current_id += 1
         return task
@@ -36,28 +46,47 @@ class InMemoryTaskRepository(ITaskRepository):
             if task.id == task_id:
                 return task
         return None
-
-
+    
+    def get_by_title(self, title: str) -> Optional[Task]:
+        for task in self.tasks:
+            if task.title == title:
+                return task
+        return None
+    
+    def update_task_complete(self, task_id: int) -> Optional[Task]:
+        task = self.get_by_id(task_id)
+        if task:
+            task.completed = True
+        return task
+    
+# app/repositories.py (เพิ่มต่อท้าย)
 from sqlalchemy.orm import Session
-from . import models_orm
-
+from . import models_orm  # ต้องสร้าง SQLAlchemy Model แยก
 
 class SqlTaskRepository(ITaskRepository):
     def __init__(self, db: Session):
         self.db = db
 
-    def get_all(self):
-        # ต้องใช้ TaskORM (SQLAlchemy) ในการ query
-        return self.db.query(models_orm.TaskORM).all()
+    def get_all(self) -> List[Task]:
+        return self.db.query(models_orm.Task).all()
 
-    def create(self, task_in: TaskCreate):
-        # แปลง Pydantic (task_in) ให้กลายเป็น ORM (TaskORM) เพื่อบันทึก
-        db_task = models_orm.TaskORM(**task_in.model_dump())
+    def create(self, task_in: TaskCreate) -> Task:
+        db_task = models_orm.Task(**task_in.dict())
         self.db.add(db_task)
         self.db.commit()
         self.db.refresh(db_task)
         return db_task
-
+    
+    def update_task_complete(self, task_id: int) -> Optional[Task]:
+        db_task = self.get_by_id(task_id)
+        if db_task:
+            db_task.completed = True
+            self.db.commit()
+            self.db.refresh(db_task)
+        return db_task
+    
     def get_by_id(self, id: int):
-        # ... implementation ...
-        pass
+        return self.db.query(models_orm.Task).filter(models_orm.Task.id == id).first()
+    
+    def get_by_title(self, title: str) -> Optional[Task]:
+        return self.db.query(models_orm.Task).filter(models_orm.Task.title == title).first()
