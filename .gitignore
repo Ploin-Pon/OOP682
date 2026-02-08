@@ -1,0 +1,17 @@
+# Python junk
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+.env
+
+# Database (สำคัญ! เราจะไม่เอา DB จริงขึ้น Git)
+*.sqlite3
+*.db
+sql_app.db
+
+# IDE settings (ถ้าใช้ VS Code)
+.vscode/
