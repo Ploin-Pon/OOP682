@@ -1,0 +1,1 @@
+# s = SRP = Responsibility Principle
