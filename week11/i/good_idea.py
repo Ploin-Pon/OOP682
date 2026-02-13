@@ -22,3 +22,8 @@ class MultiFunctionPrinter(Printer, Scanner, Fax):
 
     def fax(self, document):
         print("Faxing document")
+
+x = MultiFunctionPrinter()
+x.print("My Document")
+x.scan("My Document")
+x.fax("My Document")

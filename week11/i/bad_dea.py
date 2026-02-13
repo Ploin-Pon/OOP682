@@ -13,3 +13,6 @@ class Oldprinter(Machine):
         raise NotImplementedError("Scan not supported")
     def fax(self,document):
         raise NotImplementedError("Fax not supported")
+    
+x = Oldprinter()
+x.print("My Document")

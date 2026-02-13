@@ -1,8 +1,13 @@
 
 class App:
-  def __init__(self):
-    # พึ่งพา MySQL โดยตรง!
-    self.db = MySQLDatabase()
+   def __init__(self):
+      self.database = MySQLDatabase()
+   def save_data(self, data):
+      self.database.save(data)
 
-  def get_data(self):
-    self.db.query()
+class MySQLDatabase:
+   def save(self, data):
+      print(f"Saving data to MySQL: {data}")
+
+app = App()
+app.save_data("Sample Data")
