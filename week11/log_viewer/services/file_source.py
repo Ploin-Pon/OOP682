@@ -12,4 +12,4 @@ class FileLogSource(ILogSource):
             with open(self.filepath, 'r') as f:
                 return f.readlines()
         except FileNotFoundError:
-            return ["Error: File not00 found"]
+            return [f"Error: File not found at '{self.filepath}'"]

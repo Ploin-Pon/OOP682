@@ -1,47 +1,48 @@
-'''from PySide6.QtWidgets import QMainWindow
+from PySide6.QtWidgets import QMainWindow # หรือ PyQt6
 from interfaces.data_source import ILogSource
+from PySide6.QtWidgets import *
+from abc import ABC, abstractmethod
+from typing import List
 
 class MainWindow(QMainWindow):
     # รับ Abstraction เข้ามา (DIP)
-    def __init__(self, log_source: ILogSource):
+    def __init__(self, source: ILogSource):
         super().__init__()
-        self.log_source = log_source  # Composition
-        self.load_logs()
-        self.setCentralWidget(self.log_display)
-        self.log_display.setReadOnly(True)
-        self.log_source = log_source
-        self.load_logs()
-        self.show()
+        self.source = source  # Composition
+        self.init_ui()
+        self.load_data()
         
-
-    def load_logs(self):
-        # UI ไม่รู้ว่าข้อมูลมาจากไหน รู้แค่ get_logs()
-        logs = self.log_source.get_logs()
-        self.log_display.setPlainText('\n'.join(logs))'''
-
-from PySide6.QtWidgets import QMainWindow, QTextEdit
-from interfaces.data_source import ILogSource
-
-class MainWindow(QMainWindow):
-    def __init__(self, log_source: ILogSource):
-        super().__init__()
-        self.log_source = log_source
-        
-        # 1. สร้าง Widget ก่อน (ต้องทำก่อนเรียกใช้เสมอ!)
-        self.log_display = QTextEdit()
-        self.log_display.setReadOnly(False)
-        self.setCentralWidget(self.log_display) # เอาไปวางไว้กลางหน้าจอ
-        
+    def init_ui(self):
         self.setWindowTitle("Log Viewer")
-        self.resize(600, 400)
+        self.setGeometry(100, 100, 600, 400)
+        self.list_widget = QListWidget(self)
+        self.list_widget.setGeometry(10, 10, 580, 380)
+    
+    def load_data(self):
+        # UI ไม่รู้ว่าข้อมูลมาจากไหน รู้แค่ get_logs()
+        logs = self.source.get_logs()
+        self.list_widget.addItems(logs)
 
-        # 2. เมื่อมี Widget แล้ว ถึงจะสั่งโหลดข้อมูลใส่ลงไปได้
-        self.load_logs()
-        
-        self.show()
+'''class SourceFactory:
+    @staticmethod
+    def create_source(source_type: str) -> ILogSource:
+        if source_type == "file":
+            return FileLogSource("app.log")
+        elif source_type == "mock":
+            return MockLogSource()
+        else:
+            raise ValueError("Unknown type")
+# Strategy Interface'''
+class IFilterStrategy(ABC):
+    @abstractmethod
+    def filter(self, logs: List[str]) -> List[str]:
+        pass
 
-    def load_logs(self):
-        # ดึงข้อมูลผ่าน Interface (DIP)
-        logs = self.log_source.get_logs()
-        # ตอนนี้ self.log_display ถูกสร้างแล้ว เลยทำงานได้ไม่พัง
-        self.log_display.setPlainText('\n'.join(logs))
+# Concrete Strategies
+class ErrorOnlyFilter(IFilterStrategy):
+    def filter(self, logs):
+        return [l for l in logs if "ERROR" in l]
+
+class NoFilter(IFilterStrategy):
+    def filter(self, logs):
+        return logs
