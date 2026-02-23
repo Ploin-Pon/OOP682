@@ -10,7 +10,8 @@ if __name__ == "__main__":
     # แก้ไขตรงนี้: ให้ชี้ไปที่ Path ของไฟล์ logs.txt ของคุณ
     # หากไฟล์อยู่ที่ log_viewer/logs/logs.txt ให้ใส่ path ตามนั้น
     #source = FileLogSource("logs/logs.txt")  # หรือใช้ SourceFactory.create_source("file") ก็ได้
-    source = MockLogSource()
+    #source = MockLogSource()
+    source = SourceFactory.create_source("csv", "challenge/data.csv")
     # Inject เข้าไปใน UI
     window = MainWindow(source)
     window.show()
