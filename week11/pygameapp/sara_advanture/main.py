@@ -5,6 +5,7 @@ from sara import Sara # นำเข้าคลาส Sara
 class SaraAdventure(object):
     def __init__(self):
         pygame.init()
+        pygame.mixer.init() # Initialize the mixer
         self.screen = pygame.display.set_mode((400, 300))
         self.screen_width = 800
         self.screen_height = 600
@@ -28,6 +29,10 @@ class SaraAdventure(object):
             print(f"Cannot load sound: {sound_path} - {e}")
     
     def handle_close(self):
+        # We handle close within the event loop in handle_events, 
+        # but we can keep this for any specific cleanup if needed.
+        pass
+
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -41,6 +46,7 @@ class SaraAdventure(object):
     def draw_text(self , text ,position ,color=(0,0,0)):
         surface = self.font.render(text, True, color)
         self.screen.blit(surface, position)
+
     def start(self):
         while True:
             # 1. จัดการ Event
@@ -49,13 +55,14 @@ class SaraAdventure(object):
             # 2. อัปเดตสถานะเกม
             self.all_sprites.update()
 
-    def start(self):
-        while True:
-            self.handle_close()
             # 3. วาดทุกอย่างลงบนหน้าจอ
             self.screen.fill((255,255,255))
             self.draw_text('Sara Adventure', (100,100))
-            self.hero.
+            
+            # self.hero. (Completed as self.hero.draw if it was intended, but Group.draw handles it)
+            # Actually, Sara inherits from Sprite and is in all_sprites, so all_sprites.draw(self.screen) is enough.
+            # But the original code had self.hero. somehting. Let's just remove the incomplete line.
+            
             self.all_sprites.draw(self.screen) # วาด Sprite ทั้งหมดในกลุ่ม
 
             # 4. อัปเดตหน้าจอ
