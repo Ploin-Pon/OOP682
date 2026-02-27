@@ -1,5 +1,6 @@
 # maps package initialization
-"""Package for multi‑layer map handling.
-Provides classes for individual layers (grass, path, items) and a manager
-that composes them into a single map.
-"""
+from .layer import MapLayer
+from .grass_layer import GrassLayer
+from .path_layer import PathLayer
+from .item_layer import ItemLayer
+from .map_manager import MapManager

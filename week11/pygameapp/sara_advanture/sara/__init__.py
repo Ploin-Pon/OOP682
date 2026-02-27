@@ -14,10 +14,10 @@ class Sara(Hero):
             filename=spritesheet_path,
             x=position[0],
             y=position[1],
-            rows=2,
+            rows=4,
             cols=3,
-            width=34,
-            height=56
+            width=160,
+            height=160
         )
 
     def update(self, elapsed_time=100):
